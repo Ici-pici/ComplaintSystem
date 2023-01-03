@@ -1,13 +1,22 @@
 from marshmallow import Schema, fields, validates, ValidationError
-from password_strength import PasswordPolicy
 from models.users import ComplainerModel
+from schemas.request.base_auth import BaseAuthSchema
 
-class RegisterSchemaRequest(Schema):
-    email = fields.Email(required=True)
+class RegisterSchemaRequest(BaseAuthSchema):
     first_name = fields.Str(required=True)
     last_name = fields.Str(required=True)
     phone = fields.Str(required=True)
-    password = fields.Str(required=True)
+
+    @validates('password')
+    def validate_password(self, value):
+        policy = PasswordPolicy.from_names(
+            length=8,
+            uppercase=1,
+            numbers=1
+        )
+        errors = policy.test(value)
+        if errors:
+            raise ValidationError('Invalid Password')
 
     @validates('first_name')
     def validate_first_name(self, value):
@@ -32,19 +41,13 @@ class RegisterSchemaRequest(Schema):
         if len(value) > 14:
             raise ValidationError('The phone number should to be 14 symbols')
 
-    @validates('password')
-    def validate_password(self, value):
-        policy = PasswordPolicy.from_names(
-            length=8,
-            uppercase=1,
-            numbers=1
-        )
-        errors = policy.test(value)
-        if errors:
-            raise ValidationError('Invalid Password')
 
     @validates('email')
     def validate_email(self, value):
         repeat = ComplainerModel.query.filter_by(email=value).first()
         if repeat:
             raise ValidationError('This email already present')
+
+
+class LoginSchemaRequest(BaseAuthSchema):
+    pass
