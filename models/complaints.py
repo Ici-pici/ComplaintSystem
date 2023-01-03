@@ -19,3 +19,5 @@ class ComplaintModel(db.Model):
         default=StatusEnum.pending,
         nullable=False
     )
+    complainer_id = db.Column(db.Integer, db.ForeignKey('complainer_table.id'))
+    complainer = db.relationship("ComplainerModel")

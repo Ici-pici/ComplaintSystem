@@ -30,6 +30,7 @@ class ComplainerModel(BaseUserModel):
         default=RoleEnum.complainer,
         nullable=False
     )
+    complaints = db.relationship('ComplaintModel', backref='complaint',  lazy='dynamic')
 
 
 class AdministratorEnum(BaseUserModel):
