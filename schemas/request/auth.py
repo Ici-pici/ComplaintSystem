@@ -1,6 +1,7 @@
-from marshmallow import Schema, fields, validates, ValidationError
+from marshmallow import fields, validates, ValidationError
 from models.users import ComplainerModel
-from schemas.request.base_auth import BaseAuthSchema
+from schemas.base import BaseAuthSchema
+from password_strength import PasswordPolicy
 
 class RegisterSchemaRequest(BaseAuthSchema):
     first_name = fields.Str(required=True)

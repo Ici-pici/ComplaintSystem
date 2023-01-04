@@ -1,12 +1,9 @@
 from marshmallow import Schema, fields
 from models.enums import RoleEnum
 from marshmallow_enum import EnumField
+from schemas.base import BaseComplaintSchema
 
-class ComplaintSchemaResponse(Schema):
+class ComplaintSchemaResponse(BaseComplaintSchema):
     id = fields.Int()
-    title = fields.Str()
-    description = fields.Str()
-    photo_url = fields.Str()
-    amount = fields.Float()
     status = EnumField(RoleEnum)
     #TODO Do the nested schema
