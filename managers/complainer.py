@@ -10,9 +10,9 @@ class ComplainerManager:
         data['password'] = generate_password_hash(data['password'])
         user = ComplainerModel(**data)
         db.session.add(user)
-        db.session.commit()
         token = AuthManager.encode_token(user)
         return token
+
     @staticmethod
     def login(data):
         user = ComplainerModel.query.filter_by(email=data['email']).first()

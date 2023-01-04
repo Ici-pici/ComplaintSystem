@@ -13,6 +13,12 @@ api = Api(app)
 migrate = Migrate(app, db)
 
 
+@app.after_request
+def after_interceptor(response):
+    db.session.commit()
+    return response
+
+
 [api.add_resource(*route) for route in routes]
 
 if __name__ == '__main__':

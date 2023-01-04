@@ -16,3 +16,15 @@ class ComplaintResource(Resource):
         user = auth.current_user()
         complaint = ComplaintManager.create(data, user)
         return ComplaintSchemaResponse().dump(complaint), 201
+
+
+class ApproveComplaintResource(Resource):
+    def put(self, id):
+        ComplaintManager.approve(id)
+        return 204
+
+class RejectComplaintResource(Resource):
+    def put(self, id):
+        ComplaintManager.reject(id)
+        return 204
+
