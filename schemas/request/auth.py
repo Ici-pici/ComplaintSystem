@@ -50,5 +50,18 @@ class RegisterSchemaRequest(BaseAuthSchema):
             raise ValidationError('This email already present')
 
 
+
+class RegisterComplainerSchema(RegisterSchemaRequest):
+    sort_code = fields.Str(required=True)
+    account_number = fields.Str(required=True)
+
+    @validates('sort_code')
+    def validate_sort_code(self, value):
+        if not len(value) == 6:
+            raise ValidationError('The sort code should be 6 digits long')
+        not_digits = [i for i in value if not i.isdigit()]
+        if not_digits:
+            raise ValidationError('The sort code should consist only of digits')
+
 class LoginSchemaRequest(BaseAuthSchema):
     pass

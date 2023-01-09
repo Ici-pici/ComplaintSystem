@@ -19,12 +19,15 @@ class ComplaintResource(Resource):
 
 
 class ApproveComplaintResource(Resource):
+    @auth.login_required
+    @role_required(RoleEnum.approver)
     def put(self, id):
         ComplaintManager.approve(id)
         return 204
 
 class RejectComplaintResource(Resource):
+    @auth.login_required
+    @role_required(RoleEnum.approver)
     def put(self, id):
         ComplaintManager.reject(id)
         return 204
-

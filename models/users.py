@@ -25,6 +25,8 @@ class ApproverModel(BaseUserModel):
 class ComplainerModel(BaseUserModel):
     __tablename__ = 'complainer_table'
 
+    sort_code = db.Column(db.String(10), nullable=False)
+    account_number = db.Column(db.String(255), nullable=False)
     role = db.Column(
         db.Enum(RoleEnum),
         default=RoleEnum.complainer,
