@@ -4,24 +4,45 @@ from models.complaints import ComplaintModel
 from models.enums import StatusEnum
 from models.transactions import TransactionModel
 from services.wise import WiseService
+from utils.helpers import decode_photo
+import constants
+import os
+from services.s3 import S3Service
 
 wise = WiseService()
 class ComplaintManager:
     @staticmethod
     def create(data, user):
         data['complainer_id'] = user.id
-        complaint = ComplaintModel(**data)
-        db.session.add(complaint)
-        db.session.flush()
-        ComplaintManager.issue_transaction(
-            amount=data['amount'],
-            first_name=user.first_name,
-            last_name=user.last_name,
-            sort_code=user.sort_code,
-            account_number=user.account_number,
-            complaint_id=complaint.id
-            )
-        return complaint
+
+        photo_name = f'{uuid.uuid4()}.{data["photo_extension"]}'
+        path = os.path.join(constants.TEMP_FOLDER_PATH, photo_name)
+        decode_photo(path, data['photo'])
+        s3 = S3Service()
+        photo_url = s3.upload(path, photo_name)
+        data['photo_url'] = photo_url
+        data.pop('photo')
+        data.pop('photo_extension')
+        try:
+            complaint = ComplaintModel(**data)
+            db.session.add(complaint)
+            db.session.flush()
+
+            ComplaintManager.issue_transaction(
+                amount=data['amount'],
+                first_name=user.first_name,
+                last_name=user.last_name,
+                sort_code=user.sort_code,
+                account_number=user.account_number,
+                complaint_id=complaint.id
+                )
+            return complaint
+
+        except Exception:
+            s3.remove(key=photo_name)
+        finally:
+            os.remove(path)
+
 
     @staticmethod
     def approve(id):

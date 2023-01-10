@@ -2,6 +2,9 @@ from marshmallow import Schema, fields, validates, ValidationError
 from schemas.base import BaseComplaintSchema
 
 class ComplaintSchemaRequest(BaseComplaintSchema):
+    photo = fields.Str(required=True)
+    photo_extension = fields.Str(required=True)
+
     @validates('title')
     def validate_title(self, value):
         if len(value) > 20:

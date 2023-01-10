@@ -6,4 +6,5 @@ from schemas.base import BaseComplaintSchema
 class ComplaintSchemaResponse(BaseComplaintSchema):
     id = fields.Int()
     status = EnumField(RoleEnum)
+    photo_url = fields.Str()
     #TODO Do the nested schema
