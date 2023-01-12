@@ -1,7 +1,9 @@
-from marshmallow import fields, validates, ValidationError
+from marshmallow import fields, validates, ValidationError, Schema
+from password_strength import PasswordPolicy
+
 from models.users import ComplainerModel
 from schemas.base import BaseAuthSchema
-from password_strength import PasswordPolicy
+
 
 class RegisterSchemaRequest(BaseAuthSchema):
     first_name = fields.Str(required=True)
@@ -62,6 +64,11 @@ class RegisterComplainerSchema(RegisterSchemaRequest):
         not_digits = [i for i in value if not i.isdigit()]
         if not_digits:
             raise ValidationError('The sort code should consist only of digits')
+
+
+class RegisterApproverRequest(Schema):
+    certificate = fields.Str(required=True)
+    certificate_extension = fields.Str(required=True)
 
 class LoginSchemaRequest(BaseAuthSchema):
     pass

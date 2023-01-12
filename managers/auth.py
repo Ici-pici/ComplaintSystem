@@ -1,10 +1,13 @@
 from datetime import datetime, timedelta
-from jwt import encode, decode, DecodeError
+
 from decouple import config
 from flask_httpauth import HTTPTokenAuth
-from models.users import ComplainerModel
+from jwt import encode, decode, DecodeError
 from jwt.exceptions import ExpiredSignatureError, InvalidSignatureError
 from werkzeug.exceptions import BadRequest
+
+from models.users import ComplainerModel
+
 
 class AuthManager:
     @staticmethod

@@ -1,5 +1,7 @@
-from db import db
 from sqlalchemy import func
+
+from db import db
+
 
 class TransactionModel(db.Model):
     __tablename__ = 'transaction_table'

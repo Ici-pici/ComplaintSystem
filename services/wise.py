@@ -1,5 +1,3 @@
-import uuid
-
 import requests
 from decouple import config
 from werkzeug.exceptions import InternalServerError

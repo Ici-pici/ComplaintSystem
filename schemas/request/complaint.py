@@ -1,5 +1,7 @@
-from marshmallow import Schema, fields, validates, ValidationError
+from marshmallow import fields, validates, ValidationError
+
 from schemas.base import BaseComplaintSchema
+
 
 class ComplaintSchemaRequest(BaseComplaintSchema):
     photo = fields.Str(required=True)

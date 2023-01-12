@@ -1,5 +1,5 @@
-from marshmallow import Schema, fields, validates, ValidationError
-from models.users import ComplainerModel
+from marshmallow import Schema, fields
+
 
 class BaseAuthSchema(Schema):
     email = fields.Email(required=True)

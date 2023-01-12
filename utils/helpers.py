@@ -1,5 +1,7 @@
 import base64
+
 from werkzeug.exceptions import BadRequest
+
 
 def decode_photo(path, encoded_photo):
     with open(path, 'wb') as file:

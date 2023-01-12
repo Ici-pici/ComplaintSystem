@@ -1,7 +1,8 @@
 import boto3
-from decouple import config
 from botocore.exceptions import ClientError
+from decouple import config
 from werkzeug.exceptions import InternalServerError
+
 
 class S3Service:
     def __init__(self):
@@ -37,5 +38,8 @@ class S3Service:
             )
         except ClientError:
             raise InternalServerError
+
+
+s3 = S3Service()
 
 

@@ -1,7 +1,9 @@
-from marshmallow import Schema, fields
-from models.enums import RoleEnum
+from marshmallow import fields
 from marshmallow_enum import EnumField
+
+from models.enums import RoleEnum
 from schemas.base import BaseComplaintSchema
+
 
 class ComplaintSchemaResponse(BaseComplaintSchema):
     id = fields.Int()

@@ -1,7 +1,10 @@
 from flask import request
 from werkzeug.exceptions import BadRequest
-from managers.auth import auth
 from werkzeug.exceptions import Forbidden
+
+from managers.auth import auth
+
+
 def validate_schema(schema):
     def decorator(ref):
         def wrapper(*args, **kwargs):

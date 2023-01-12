@@ -1,11 +1,13 @@
-from flask_restful import Resource
 from flask import request
+from flask_restful import Resource
+
 from managers.auth import auth
-from utils.decorators import role_required, validate_schema
-from models.enums import RoleEnum
 from managers.complaint import ComplaintManager
-from schemas.response.complaint import ComplaintSchemaResponse
+from models.enums import RoleEnum
 from schemas.request.complaint import ComplaintSchemaRequest
+from schemas.response.complaint import ComplaintSchemaResponse
+from utils.decorators import role_required, validate_schema
+
 
 class ComplaintResource(Resource):
     @auth.login_required
