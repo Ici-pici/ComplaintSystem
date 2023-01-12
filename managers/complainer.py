@@ -7,9 +7,10 @@ from werkzeug.security import generate_password_hash, check_password_hash
 import constants
 from db import db
 from managers.auth import AuthManager
-from models.users import ComplainerModel, ApproverModel
+from models.users import ComplainerModel, ApproverModel, AdminModel
 from services.s3 import s3
 from utils.helpers import decode_photo
+from utils.helpers import models
 
 
 class ComplainerManager:
@@ -24,13 +25,12 @@ class ComplainerManager:
 
     @staticmethod
     def login(data):
-        #TODO Need refactor for login in different roles!
-        user = ComplainerModel.query.filter_by(email=data['email']).first()
+        user = [y for y in [eval(f"{x}.query.filter_by(email={data}['email']).first()") for x in models] if y]
         if not user:
             raise BadRequest('Invalid Email')
-        if not check_password_hash(user.password, data['password']):
+        if not check_password_hash(user[0].password, data['password']):
             raise BadRequest('Wrong Password')
-        return AuthManager.encode_token(user)
+        return AuthManager.encode_token(user[0])
 
 
 class ApproverManager:

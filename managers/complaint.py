@@ -6,7 +6,7 @@ from db import db
 from models.complaints import ComplaintModel
 from models.enums import StatusEnum
 from models.transactions import TransactionModel
-from services.s3 import S3Service
+from services.s3 import s3
 from services.wise import WiseService
 from utils.helpers import decode_photo
 
@@ -19,7 +19,6 @@ class ComplaintManager:
         photo_name = f'{uuid.uuid4()}.{data["photo_extension"]}'
         path = os.path.join(constants.TEMP_FOLDER_PATH, photo_name)
         decode_photo(path, data['photo'])
-        s3 = S3Service()
         photo_url = s3.upload(path, photo_name)
         data['photo_url'] = photo_url
         data.pop('photo')

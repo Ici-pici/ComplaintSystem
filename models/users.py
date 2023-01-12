@@ -35,7 +35,7 @@ class ComplainerModel(BaseUserModel):
     complaints = db.relationship('ComplaintModel', backref='complaint',  lazy='dynamic')
 
 
-class AdministratorEnum(BaseUserModel):
+class AdminModel(BaseUserModel):
     __tablename__ = 'administrator_table'
 
     role = db.Column(

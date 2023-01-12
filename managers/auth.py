@@ -6,7 +6,7 @@ from jwt import encode, decode, DecodeError
 from jwt.exceptions import ExpiredSignatureError, InvalidSignatureError
 from werkzeug.exceptions import BadRequest
 
-from models.users import ComplainerModel
+from models.users import ComplainerModel, ApproverModel, AdminModel
 
 
 class AuthManager:
@@ -14,7 +14,8 @@ class AuthManager:
     def encode_token(user):
         payload = {
             'exp': datetime.utcnow() + timedelta(days=2),
-            'sub': user.id
+            'sub': user.id,
+            'type': user.__class__.__name__
             }
         return encode(payload,
                       key=config('JWT_KEY'),
@@ -25,7 +26,7 @@ class AuthManager:
     def decode_token(token):
         try:
             payload = decode(token, key=config('JWT_KEY'), algorithms=['HS256'])
-            return payload['sub']
+            return payload['sub'], payload['type']
         except ExpiredSignatureError:
             raise BadRequest('Expired Token')
         except InvalidSignatureError:
@@ -38,7 +39,7 @@ auth = HTTPTokenAuth()
 
 @auth.verify_token
 def verify_token(token):
-    user_id = AuthManager.decode_token(token)
-    return ComplainerModel.query.filter_by(id=user_id).first()
+    user_id, role = AuthManager.decode_token(token)
+    return eval(f"{role}.query.filter_by(id=user_id).first()")
 
 
