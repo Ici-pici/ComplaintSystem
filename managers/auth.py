@@ -4,7 +4,7 @@ from decouple import config
 from flask_httpauth import HTTPTokenAuth
 from jwt import encode, decode, DecodeError
 from jwt.exceptions import ExpiredSignatureError, InvalidSignatureError
-from werkzeug.exceptions import BadRequest
+from werkzeug.exceptions import BadRequest, Unauthorized
 
 from models.users import ComplainerModel, ApproverModel, AdminModel
 
@@ -24,15 +24,15 @@ class AuthManager:
 
     @staticmethod
     def decode_token(token):
+        if not token:
+            raise Unauthorized('Token Required')
         try:
             payload = decode(token, key=config('JWT_KEY'), algorithms=['HS256'])
             return payload['sub'], payload['type']
         except ExpiredSignatureError:
-            raise BadRequest('Expired Token')
+            raise Unauthorized('Expired Token')
         except InvalidSignatureError:
-            raise BadRequest('Invalid Token')
-        except DecodeError:
-            raise BadRequest('Token Required')
+            raise Unauthorized('Invalid Token')
 
 
 auth = HTTPTokenAuth()

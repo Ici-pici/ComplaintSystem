@@ -28,7 +28,7 @@ class ComplaintManager:
             db.session.add(complaint)
             db.session.flush()
 
-            ComplaintManager.issue_transaction(
+            data = ComplaintManager.issue_transaction(
                 amount=data['amount'],
                 first_name=user.first_name,
                 last_name=user.last_name,
@@ -36,6 +36,9 @@ class ComplaintManager:
                 account_number=user.account_number,
                 complaint_id=complaint.id
                 )
+            transaction = TransactionModel(**data)
+            db.session.add(transaction)
+            db.session.flush()
             return complaint
 
         except Exception:
@@ -71,6 +74,4 @@ class ComplaintManager:
             'amount': amount,
             'complaint_id': complaint_id,
         }
-        transaction = TransactionModel(**data)
-        db.session.add(transaction)
-        db.session.flush()
+        return data
