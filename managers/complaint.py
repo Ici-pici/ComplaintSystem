@@ -9,6 +9,7 @@ from models.transactions import TransactionModel
 from services.s3 import s3
 from services.wise import WiseService
 from utils.helpers import decode_photo
+from werkzeug.exceptions import InternalServerError
 
 wise = WiseService()
 class ComplaintManager:
@@ -43,6 +44,7 @@ class ComplaintManager:
 
         except Exception:
             s3.remove(key=photo_name)
+            raise InternalServerError('Something went wrong')
         finally:
             os.remove(path)
 

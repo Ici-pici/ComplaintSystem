@@ -4,6 +4,7 @@ from config import create_app
 import json
 from tests.factories import ApproverFactory, ComplainerFactory
 from tests.helper import create_token
+from tests.abstract_class import BaseTestClass
 
 LOGIN_REQUIRED_ENDPOINTS = (
             ('post', '/approver_register'),
@@ -22,20 +23,9 @@ APPROVER_ROLE_REQUIREMENT_ENDPOINTS = (
             ('put', '/complaint/1/reject')
         )
 
-class TestApp(TestCase):
+class TestApp(BaseTestClass):
     #TODO Token Expired with Patch
     #TODO Administration test when we have admins endpoints
-
-    def create_app(self):
-        return create_app('config.TestsEnv')
-
-    def setUp(self):
-        db.init_app(self.create_app())
-        db.create_all()
-
-    def tearDown(self):
-        db.session.remove()
-        db.drop_all()
 
     def endpoint_iteration(self, endpoints, message, assert_type, headers=None):
 

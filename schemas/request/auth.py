@@ -41,7 +41,7 @@ class RegisterSchemaRequest(BaseAuthSchema):
     def validate_phone(self, value):
         if value[0] != '+':
             raise ValidationError('Please enter the country code too')
-        if len(value) > 14:
+        if len(value) != 15:
             raise ValidationError('The phone number should to be 14 symbols')
 
 

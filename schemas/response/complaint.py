@@ -9,4 +9,5 @@ class ComplaintSchemaResponse(BaseComplaintSchema):
     id = fields.Int()
     status = EnumField(RoleEnum)
     photo_url = fields.Str()
+    complainer_id = fields.Int()
     #TODO Do the nested schema
