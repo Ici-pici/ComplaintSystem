@@ -17,7 +17,7 @@ from tests.helper import create_token, test_photo, uuid_custom, data_from_transa
 from tests.abstract_class import BaseTestClass
 
 
-class TestComplaint(BaseTestClass):
+class TestComplaintManager(BaseTestClass):
     URL = '/make_complaint'
 
     def abstract_test(self, type_user, http_method, url, status_code, data=None):
@@ -64,7 +64,7 @@ class TestComplaint(BaseTestClass):
         user, response = self.abstract_test(
             ComplainerFactory,
             'post',
-            TestComplaint.URL,
+            TestComplaintManager.URL,
             201,
             data=data
         )
@@ -125,7 +125,7 @@ class TestComplaint(BaseTestClass):
         user, response = self.abstract_test(
             ComplainerFactory,
             'post',
-            TestComplaint.URL,
+            TestComplaintManager.URL,
             500,
             data=data
         )
@@ -186,7 +186,7 @@ class TestComplaint(BaseTestClass):
         user, response = self.abstract_test(
             ComplainerFactory,
             'post',
-            TestComplaint.URL,
+            TestComplaintManager.URL,
             400,
             data=data
         )

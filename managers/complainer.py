@@ -2,7 +2,7 @@ import os
 import uuid
 
 from werkzeug.exceptions import BadRequest
-from werkzeug.security import generate_password_hash, check_password_hash
+from werkzeug import security
 
 import constants
 from db import db
@@ -11,12 +11,13 @@ from models.users import ComplainerModel, ApproverModel, AdminModel
 from services.s3 import s3
 from utils.helpers import decode_photo
 from utils.helpers import models
+from models.enums import RoleEnum
 
 
 class ComplainerManager:
     @staticmethod
     def register(data):
-        data['password'] = generate_password_hash(data['password'])
+        data['password'] = security.generate_password_hash(data['password'])
         user = ComplainerModel(**data)
         db.session.add(user)
         db.session.flush()
@@ -28,7 +29,7 @@ class ComplainerManager:
         user = [y for y in [eval(f"{x}.query.filter_by(email={data}['email']).first()") for x in models] if y]
         if not user:
             raise BadRequest('Invalid Email')
-        if not check_password_hash(user[0].password, data['password']):
+        if not security.check_password_hash(user[0].password, data['password']):
             raise BadRequest('Wrong Password')
         return AuthManager.encode_token(user[0])
 
@@ -45,7 +46,7 @@ class ApproverManager:
             phone=user.phone,
             password=user.password,
             certificate=data['certificate'],
-            role='approver'
+            role=RoleEnum.approver
         )
         db.session.add(approver)
         db.session.flush()

@@ -4,6 +4,7 @@ from werkzeug.exceptions import BadRequest
 
 
 models = ['ApproverModel', 'ComplainerModel', 'AdminModel']
+
 def decode_photo(path, encoded_photo):
     with open(path, 'wb') as file:
         try:
