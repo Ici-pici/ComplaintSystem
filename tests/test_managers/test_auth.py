@@ -7,8 +7,14 @@ from managers.auth import AuthManager
 from db import db
 from tests.factories import ComplainerFactory, ApproverFactory, AdminFactory
 from models.enums import RoleEnum
-from tests.helper import create_token
+from tests.helper import create_token, uuid_custom, test_photo, jwt_decode_mock
 from managers.complainer import ApproverManager
+from services.s3 import S3Service
+import jwt
+import constants
+import os
+from models.users import ApproverModel
+from decouple import config
 
 headers = {
             'Content-Type': 'application/json'
@@ -90,7 +96,6 @@ class TestLoginComplainerManager(BaseTestClass):
         }
         response, data, user = self.abstract_test(ApproverFactory, status_code=400, data=data)
         assert response.json['message'] == 'Invalid Email'
-        print()
 
     @patch.object(security, 'check_password_hash', return_value=False)
     def test_login_with_wrong_password(self, check_password_hash_mock):
@@ -102,15 +107,18 @@ class TestLoginComplainerManager(BaseTestClass):
 class TestRegisterApproverManager(BaseTestClass):
     URL = '/approver_register'
 
-    @patch.object(ApproverManager, 'upload_certificate', return_value='someurl.com')
-    def test_register_approver_happy_path(self, upload_certificate_mock):
-        #TODO The mock is not correct. We have to mock every part of the upload_certificate, if we want to cover more things.
+    def db_checker(self, complainer_len, approver_len):
+        complainers = ComplainerModel.query.all()
+        assert len(complainers) == complainer_len
+        approvers = ApproverModel.query.all()
+        assert len(approvers) == approver_len
 
+    def abstract_test(self, photo, status_code, message):
         complainer = ComplainerFactory()
         token = create_token(complainer)
 
         data = {
-            'certificate': 'SomeCertificate',
+            'certificate': photo,
             'certificate_extension': 'png'
         }
 
@@ -119,6 +127,45 @@ class TestRegisterApproverManager(BaseTestClass):
             'Authorization': f'Bearer {token}'
         }
 
-        response = self.client.post(TestRegisterApproverManager.URL, headers=headers, json=data)
+        self.db_checker(1, 0)
 
+        response = self.client.post(TestRegisterApproverManager.URL, headers=headers, json=data)
+        assert response.status_code == status_code
+        assert response.json == message
+
+        return response, data, complainer
+
+    @patch('uuid.uuid4', uuid_custom)
+    @patch.object(db.session, 'flush')
+    @patch.object(os, 'remove')
+    @patch.object(jwt, 'decode', return_value=jwt_decode_mock())
+    @patch.object(AuthManager, 'encode_token', return_value=token_custom())
+    @patch.object(S3Service, 'upload', return_value='testurl.com')
+    def test_register_approver_happy_path(self, s3_mock, encode_token_mock, jwt_mock, os_remove_mock, flush_mock):
+        expected_response = {
+            'token': token_custom()
+        }
+
+        response, data, complainer = self.abstract_test(test_photo, 200, expected_response)
+
+        self.db_checker(0, 1)
+
+        certificate_name = uuid_custom() + f'.{data["certificate_extension"]}'
+        path = os.path.join(constants.TEMP_FOLDER_PATH, certificate_name)
+        s3_mock.assert_called_once_with(path, certificate_name)
+
+        encode_token_mock.assert_called()
+
+        jwt_mock.assert_called_once_with(token_custom(), key=config('JWT_KEY'), algorithms=['HS256'])
+
+        os_remove_mock.assert_called_once_with(path)
+
+        flush_mock.assert_called_once_with()
+
+    def test_register_approver_with_wrong_photo_type(self):
+        expected_response = {
+            'message': 'Photo decoding failed'
+        }
+
+        self.abstract_test('WrongPhoto', 400, expected_response)
 

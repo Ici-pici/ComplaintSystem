@@ -31,5 +31,11 @@ def hash_custom():
 def ordinary_mock(*args):
     return True
 
+def jwt_decode_mock():
+    return {
+        'sub': 1,
+        'type': 'ComplainerModel'
+    }
+
 
 

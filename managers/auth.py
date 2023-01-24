@@ -1,4 +1,5 @@
 from datetime import datetime, timedelta
+import jwt
 
 from decouple import config
 from flask_httpauth import HTTPTokenAuth
@@ -27,7 +28,7 @@ class AuthManager:
         if not token:
             raise Unauthorized('Token Required')
         try:
-            payload = decode(token, key=config('JWT_KEY'), algorithms=['HS256'])
+            payload = jwt.decode(token, key=config('JWT_KEY'), algorithms=['HS256'])
             return payload['sub'], payload['type']
         except ExpiredSignatureError:
             raise Unauthorized('Expired Token')

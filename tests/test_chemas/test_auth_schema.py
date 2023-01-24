@@ -6,6 +6,7 @@ from unittest.mock import patch
 from models.users import ComplainerModel
 from werkzeug import security
 from tests.helper import create_token
+from tests.helper import ordinary_mock
 
 headers = {
     'Content-Type': 'application/json'
@@ -262,7 +263,7 @@ class TestAuthSchemaLogin(BaseTestClass):
         }
         self.abstract_test(data, expected_response)
 
-    @patch.object(security, 'check_password_hash', return_value=True)
+    @patch.object(security, 'check_password_hash', return_value=ordinary_mock())
     def test_login_happy_path(self, check_pass_hash_mock):
         user = ComplainerFactory()
         data = {
