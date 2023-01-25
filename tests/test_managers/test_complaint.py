@@ -1,20 +1,16 @@
 import os
 from unittest.mock import patch
 
-from flask_testing import TestCase
-
 import constants
-from config import create_app
-from db import db
 from managers.complaint import ComplaintManager
 from models.complaints import ComplaintModel
 from models.enums import StatusEnum
 from models.transactions import TransactionModel
 from services.s3 import S3Service
 from services.wise import WiseService
+from tests.abstract_class import BaseTestClass
 from tests.factories import ComplainerFactory, ApproverFactory
 from tests.helper import create_token, test_photo, uuid_custom, data_from_transaction
-from tests.abstract_class import BaseTestClass
 
 
 class TestComplaintManager(BaseTestClass):

@@ -1,10 +1,9 @@
-import copy
+from unittest.mock import patch
+
+from werkzeug import security
 
 from tests.abstract_class import BaseTestClass
 from tests.factories import ComplainerFactory
-from unittest.mock import patch
-from models.users import ComplainerModel
-from werkzeug import security
 from tests.helper import create_token
 from tests.helper import ordinary_mock
 

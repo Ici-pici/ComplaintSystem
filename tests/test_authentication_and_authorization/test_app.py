@@ -1,16 +1,15 @@
-from flask_testing import TestCase
-from db import db
-from config import create_app
-import json
+from tests.abstract_class import BaseTestClass
 from tests.factories import ApproverFactory, ComplainerFactory
 from tests.helper import create_token
-from tests.abstract_class import BaseTestClass
 
 LOGIN_REQUIRED_ENDPOINTS = (
             ('post', '/approver_register'),
             ('post', '/make_complaint'),
             ('put', '/complaint/1/approve'),
-            ('put', '/complaint/1/reject')
+            ('put', '/complaint/1/reject'),
+            ('put', '/approver_request/1/approve'),
+            ('put', '/approver_request/1/reject'),
+            ('put', '/remove_approver/1')
         )
 
 COMPLAINER_ROLE_REQUIRED_ENDPOINTS = (
@@ -20,12 +19,17 @@ COMPLAINER_ROLE_REQUIRED_ENDPOINTS = (
 
 APPROVER_ROLE_REQUIREMENT_ENDPOINTS = (
             ('put', '/complaint/1/approve'),
-            ('put', '/complaint/1/reject')
+            ('put', '/complaint/1/reject'),
+            ('put', '/remove_approver/1')
         )
+
+ADMIN_ROLE_REQUIREMNT_ENDPOINTS = (
+            ('put', '/approver_request/1/approve'),
+            ('put', '/approver_request/1/reject'),
+)
 
 class TestApp(BaseTestClass):
     #TODO Token Expired with Patch
-    #TODO Administration test when we have admins endpoints
 
     def endpoint_iteration(self, endpoints, message, assert_type, headers=None):
 
@@ -59,5 +63,11 @@ class TestApp(BaseTestClass):
         complainer = ComplainerFactory()
         token = create_token(complainer)
         headers = {'Authorization': f"Bearer {token}"}
-        self.endpoint_iteration(APPROVER_ROLE_REQUIREMENT_ENDPOINTS, 'Permission denied', self.assert403, headers)
+        self.endpoint_iteration(APPROVER_ROLE_REQUIREMENT_ENDPOINTS, 'Permission denied', self.assert403, headers=headers)
+
+    def test_all_endpoints_that_require_admin_role(self):
+        approver = ApproverFactory()
+        token = create_token(approver)
+        headers = {'Authorization': f"Bearer {token}"}
+        self.endpoint_iteration(ADMIN_ROLE_REQUIREMNT_ENDPOINTS, 'Permission denied', self.assert_403, headers=headers)
 

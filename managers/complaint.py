@@ -1,6 +1,8 @@
 import os
 import uuid
 
+from werkzeug.exceptions import InternalServerError
+
 import constants
 from db import db
 from models.complaints import ComplaintModel
@@ -9,7 +11,6 @@ from models.transactions import TransactionModel
 from services.s3 import s3
 from services.wise import WiseService
 from utils.helpers import decode_photo
-from werkzeug.exceptions import InternalServerError
 
 wise = WiseService()
 class ComplaintManager:

@@ -30,11 +30,6 @@ class S3Service:
             response = self.s3.delete_object(
                 Bucket=self.bucket_name,
                 Key=key,
-                # MFA='string',
-                # VersionId='string',
-                # RequestPayer='requester',
-                # BypassGovernanceRetention=True | False,
-                # ExpectedBucketOwner='string'
             )
         except ClientError:
             raise InternalServerError

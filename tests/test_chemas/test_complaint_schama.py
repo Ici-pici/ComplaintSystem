@@ -1,4 +1,3 @@
-from flask_testing import TestCase
 from tests.abstract_class import BaseTestClass
 from tests.factories import ComplainerFactory
 from tests.helper import create_token

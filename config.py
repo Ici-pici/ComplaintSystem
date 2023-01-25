@@ -1,5 +1,6 @@
 from decouple import config
 from flask import Flask
+from flask_cors import CORS
 from flask_migrate import Migrate
 from flask_restful import Api
 
@@ -43,5 +44,6 @@ def create_app(configuration="config.DevelopmentEnv"):
     db.init_app(app)
     api = Api(app)
     migrate = Migrate(app, db)
+    CORS(app)
     [api.add_resource(*route) for route in routes]
     return app

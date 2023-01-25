@@ -1,8 +1,8 @@
 import factory
 
 from db import db
-from models.users import ApproverModel, ComplainerModel, AdminModel
 from models.enums import RoleEnum
+from models.users import ApproverModel, ComplainerModel, AdminModel
 
 
 class BaseFactory(factory.Factory):
@@ -24,7 +24,7 @@ class ApproverFactory(BaseFactory):
     class Meta:
         model = ApproverModel
 
-    certificate = factory.Faker('name')
+    certificate = 'https://some_name.s3.amazonaw.com/024fa46e-10c3-491a-b8c7-a85477c80c19.png'
     role = RoleEnum.approver
 
 class ComplainerFactory(BaseFactory):
