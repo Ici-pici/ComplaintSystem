@@ -25,6 +25,8 @@ class RegisterSchemaRequest(BaseAuthSchema):
     def validate_first_name(self, value):
         if len(value) < 2:
             raise ValidationError('Min length is 2 letters')
+        if len(value) > 20:
+            raise ValidationError('20 letters is maximum length')
         for letter in value:
             if letter.isdigit():
                 raise ValidationError('The name can consist only of letters')
@@ -33,6 +35,8 @@ class RegisterSchemaRequest(BaseAuthSchema):
     def validate_last_name(self, value):
         if len(value) < 2:
             raise ValidationError('Min length is 2 letters')
+        if len(value) > 20:
+            raise ValidationError('20 letters is maximum length')
         for letter in value:
             if letter.isdigit():
                 raise ValidationError('The name can consist only of letters')
@@ -64,6 +68,12 @@ class RegisterComplainerSchema(RegisterSchemaRequest):
         not_digits = [i for i in value if not i.isdigit()]
         if not_digits:
             raise ValidationError('The sort code should consist only of digits')
+
+    @validates('account_number')
+    def validate_account_number(self, value):
+        if len(value) != 8:
+            raise ValidationError('Invalid Account Number')
+
 
 
 class RegisterApproverRequest(Schema):

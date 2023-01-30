@@ -18,7 +18,7 @@ class TestAuthSchemaRegister(BaseTestClass):
             'first_name': 'Test Name',
             'last_name': 'Test Last Name',
             'phone': '+11111111111111',
-            'account_number': '111111111',
+            'account_number': '11111111',
             'sort_code': '111111'
         }
 
@@ -107,6 +107,14 @@ class TestAuthSchemaRegister(BaseTestClass):
         }
         self.abstract_test(data, 400, expected_response)
 
+    def test_first_name_with_for_max_length(self):
+        data = TestAuthSchemaRegister.VALID_DATA.copy()
+        data['first_name'] = 'aaaaaaaaaaaaaaaaaaaaa'
+        expected_response = {
+            'first_name': ['20 letters is maximum length']
+        }
+        self.abstract_test(data, 400, expected_response)
+
     def test_first_name_with_digits(self):
         data = TestAuthSchemaRegister.VALID_DATA.copy()
         data['first_name'] = 'Test Name 2'
@@ -128,6 +136,14 @@ class TestAuthSchemaRegister(BaseTestClass):
         data['last_name'] = 'a'
         expected_response = {
             'last_name': ['Min length is 2 letters']
+        }
+        self.abstract_test(data, 400, expected_response)
+
+    def test_last_name_with_for_max_length(self):
+        data = TestAuthSchemaRegister.VALID_DATA.copy()
+        data['last_name'] = 'aaaaaaaaaaaaaaaaaaaaa'
+        expected_response = {
+            'last_name': ['20 letters is maximum length']
         }
         self.abstract_test(data, 400, expected_response)
 
@@ -185,6 +201,22 @@ class TestAuthSchemaRegister(BaseTestClass):
         data['sort_code'] = '66666A'
         expected_response = {
             'sort_code': ['The sort code should consist only of digits']
+        }
+        self.abstract_test(data, 400, expected_response)
+
+    def test_account_number_with_invalid_data_type(self):
+        data = TestAuthSchemaRegister.VALID_DATA.copy()
+        data['account_number'] = 5
+        expected_response = {
+            'account_number': ['Not a valid string.']
+        }
+        self.abstract_test(data, 400, expected_response)
+
+    def test_account_number_with_incorrect_length(self):
+        data = TestAuthSchemaRegister.VALID_DATA.copy()
+        data['account_number'] = '111111111'
+        expected_response = {
+            'account_number': ['Invalid Account Number']
         }
         self.abstract_test(data, 400, expected_response)
 
